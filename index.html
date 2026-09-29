@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENATI - Ejercicio 8: Área de un Círculo</title>
+  
+  <style>
+    /* Reset & Estilos Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --accent: #8b5cf6;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Layout principal */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    /* Tarjetas */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+
+    /* Formularios e Inputs */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Botones de Acceso Rápido */
+    .quick-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-quick {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.4rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-quick:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Botones principales */
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    button.btn-main {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button.btn-main:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #334155;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    /* Mensajes de Alerta */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    /* Grid de Resultados */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      border-left: 4px solid var(--primary);
+    }
+
+    .stat-card.area { border-left-color: var(--primary); }
+    .stat-card.perimetro { border-left-color: var(--success); }
+    .stat-card.diametro { border-left-color: var(--accent); }
+
+    .stat-card .title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card .val {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-top: 0.3rem;
+      font-family: monospace;
+    }
+
+    /* Desarrollo de Fórmula */
+    .formula-box {
+      background-color: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .formula-box span {
+      color: var(--text-main);
+      font-weight: bold;
+    }
+
+    .placeholder-text {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SENATI - Algoritmos y Programación</h1>
+    <p>Práctica Dirigida Nivel 1 • Ejercicio 08: Cálculo del Área de un Círculo</p>
+  </header>
+
+  <div class="container">
+    
+    <!-- Panel Izquierdo: Entrada de Datos -->
+    <div class="card">
+      <h2>Ingreso de Parámetros</h2>
+      <form id="circleForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="radioInput">Radio del Círculo (r):</label>
+          <input type="number" id="radioInput" min="0.001" step="any" placeholder="Ej. 5" required>
+        </div>
+
+        <div class="form-group">
+          <label>Valores Rápidos de Ejemplo:</label>
+          <div class="quick-buttons">
+            <button type="button" class="btn-quick" onclick="cargarRadio(1)">r = 1</button>
+            <button type="button" class="btn-quick" onclick="cargarRadio(3)">r = 3</button>
+            <button type="button" class="btn-quick" onclick="cargarRadio(5)">r = 5</button>
+            <button type="button" class="btn-quick" onclick="cargarRadio(10)">r = 10</button>
+            <button type="button" class="btn-quick" onclick="cargarRadio(15)">r = 15</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-main btn-primary" id="btnCalcular">Calcular Área</button>
+          <button type="button" class="btn-main btn-secondary" id="btnLimpiar">Limpiar</button>
+        </div>
+      </form>
+
+      <!-- Alerta de Validación -->
+      <div id="alertBox" class="alert"></div>
+    </div>
+
+    <!-- Panel Derecho: Resultados Geométricos -->
+    <div class="card">
+      <h2>Resultados Geométricos</h2>
+      
+      <div class="placeholder-text" id="placeholder">
+        Ingrese la medida del radio y presione "Calcular Área".
+      </div>
+
+      <div id="resultsContainer" style="display: none;">
+        
+        <!-- Métricas -->
+        <div class="stats-grid">
+          <div class="stat-card area">
+            <div class="title">Área del Círculo</div>
+            <div class="val" id="valArea" style="color: var(--primary);">0.00</div>
+          </div>
+          <div class="stat-card perimetro">
+            <div class="title">Perímetro (Circunferencia)</div>
+            <div class="val" id="valPerimetro" style="color: var(--success);">0.00</div>
+          </div>
+          <div class="stat-card diametro">
+            <div class="title">Diámetro</div>
+            <div class="val" id="valDiametro" style="color: var(--accent);">0.00</div>
+          </div>
+        </div>
+
+        <!-- Fórmulas Aplicadas -->
+        <div class="formula-box">
+          📌 <strong>Fórmula del Área:</strong><br>
+          Area = π × r² = Math.PI × <span id="fRadioSq">0</span>² = <span id="fArea">0.0000</span> u²
+        </div>
+
+        <div class="formula-box">
+          📏 <strong>Fórmula del Perímetro:</strong><br>
+          Perímetro = 2 × π × r = 2 × Math.PI × <span id="fRadio">0</span> = <span id="fPerimetro">0.0000</span> u
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const radioInput = document.getElementById('radioInput');
+      const btnCalcular = document.getElementById('btnCalcular');
+      const btnLimpiar = document.getElementById('btnLimpiar');
+      const alertBox = document.getElementById('alertBox');
+
+      const placeholder = document.getElementById('placeholder');
+      const resultsContainer = document.getElementById('resultsContainer');
+
+      const valArea = document.getElementById('valArea');
+      const valPerimetro = document.getElementById('valPerimetro');
+      const valDiametro = document.getElementById('valDiametro');
+
+      const fRadioSq = document.getElementById('fRadioSq');
+      const fArea = document.getElementById('fArea');
+      const fRadio = document.getElementById('fRadio');
+      const fPerimetro = document.getElementById('fPerimetro');
+
+      // Mostrar errores
+      function showError(msg) {
+        if (msg) {
+          alertBox.textContent = msg;
+          alertBox.classList.add('show');
+        } else {
+          alertBox.classList.remove('show');
+        }
+      }
+
+      // Cargar radio rápido
+      window.cargarRadio = (r) => {
+        radioInput.value = r;
+        calcularArea();
+      };
+
+      // Función principal de cálculo
+      function calcularArea() {
+        const val = radioInput.value.trim();
+
+        if (val === '') {
+          showError('Por favor ingrese el radio del círculo.');
+          return;
+        }
+
+        const r = parseFloat(val);
+
+        if (isNaN(r)) {
+          showError('Ingrese un valor numérico válido.');
+          return;
+        }
+
+        if (r <= 0) {
+          showError('El radio debe ser un número positivo mayor que cero (0).');
+          return;
+        }
+
+        showError(null);
+
+        // Fórmulas matemáticas geométricas
+        const area = Math.PI * Math.pow(r, 2);
+        const perimetro = 2 * Math.PI * r;
+        const diametro = 2 * r;
+
+        // Formateo de salidas
+        valArea.textContent = area.toFixed(2) + ' u²';
+        valPerimetro.textContent = perimetro.toFixed(2) + ' u';
+        valDiametro.textContent = diametro.toFixed(2) + ' u';
+
+        fRadioSq.textContent = r;
+        fArea.textContent = area.toFixed(4);
+        fRadio.textContent = r;
+        fPerimetro.textContent = perimetro.toFixed(4);
+
+        // Mostrar Panel de Resultados
+        placeholder.style.display = 'none';
+        resultsContainer.style.display = 'block';
+      }
+
+      // Limpiar formulario
+      function limpiar() {
+        radioInput.value = '';
+        showError(null);
+        placeholder.style.display = 'block';
+        resultsContainer.style.display = 'none';
+        radioInput.focus();
+      }
+
+      // Event Listeners
+      btnCalcular.addEventListener('click', calcularArea);
+      btnLimpiar.addEventListener('click', limpiar);
+
+      radioInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') calcularArea();
+      });
+    });
+  </script>
+</body>
+</html>
